@@ -1,0 +1,135 @@
+syntax = "proto3";
+package xsq;
+
+service XSQ {
+  /// Basic API
+
+  // Get Message
+  rpc GetMessage(GetMessageReq) returns (GetMessageResp);
+
+  // Submit Message
+  rpc SubmitMessage(SubmitMessageReq) returns (SubmitMessageResp);
+
+  // Commit message
+  rpc CommitMessage(CommitReq) returns (CommitResp);
+
+  /// Statistical Correlation API
+
+  // Get All the topic
+  rpc AllTopics(AllTopicReq) returns (AllTopicResp);
+
+  // Get All channels under a topic
+  rpc AllChannel(AllChannelReq) returns (AllChannelResp);
+
+  // Topic statistics
+  rpc TopicStatistics(TopicStatisticsReq) returns (TopicStatisticsResp);
+
+  /// Management API
+
+  // Delete Topic
+  rpc DelTopic(DelTopicReq) returns (DelTopicResp);
+
+  // Delete Channel(
+  rpc DelChannel(DelChannelReq) returns (DelChannelResp);
+}
+
+message DelChannelReq {
+  string channel = 1;
+}
+
+message DelChannelResp {
+  bool success = 1;
+}
+
+message DelTopicReq {
+  string topic = 1;
+}
+
+message DelTopicResp {
+  bool success = 1;
+}
+
+message TopicStatisticsReq {
+  string topic = 1;
+}
+
+message TopicStatisticsResp {
+  repeated ChannelStatistics channels = 1;
+  uint64 number_messages = 2;
+}
+
+message ChannelStatistics {
+  repeated ChannelServers servers = 1;
+  uint64 consumption_figure = 2;
+}
+
+message ChannelServers {
+  string server_id = 1;
+  string address = 2;
+  uint64 consumption_figure = 3;
+}
+
+message GetMessageReq {
+  string topic = 1;
+  string channel = 2;
+  uint64 offset = 3;
+  uint64 limit = 4;
+  OffsetType type = 5;
+}
+
+enum OffsetType {
+  // Last position held 上次位置继续
+  Default = 0;
+  // UpToDate 最新的
+  UpToDate = 1;
+  // More offset 更具offset
+  Offset = 3;
+}
+
+message GetMessageResp {
+  repeated MessageResp messages = 1;
+}
+
+message Message {
+  bytes key = 1;
+  bytes value = 2;
+}
+
+message MessageResp {
+  uint64 index = 1;
+  Message message = 2;
+}
+
+message SubmitMessageReq {
+  repeated Message messages = 1;
+}
+
+message SubmitMessageResp {
+  bool success = 1;
+}
+
+message AllChannelReq {
+  string topic = 1;
+}
+
+message AllChannelResp {
+  repeated string channels = 1;
+}
+
+message AllTopicReq {
+
+}
+
+message AllTopicResp {
+  repeated string topics = 1;
+}
+
+message CommitReq {
+  string topic = 1;
+  string channel = 2;
+}
+
+message CommitResp {
+  bool success = 1;
+}
+
